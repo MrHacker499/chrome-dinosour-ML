@@ -599,6 +599,8 @@
                 this.tRex.update(deltaTime);
                 this.scheduleNextUpdate();
             }
+
+            $('#score').text("Distance: " + this.distanceRan);
         },
 
         simulateJump: function () {
