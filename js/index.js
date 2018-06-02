@@ -18,6 +18,24 @@
         }
         Runner.instance_ = this;
 
+        //AI---------------------------------------------------------------------
+        this.numOfGenomes = 10
+        this.generation = 0;
+        this.genome = 0;
+
+        this.neuralNets = [];
+        for (let i = 0; i < this.numOfGenomes; i++) {
+            this.neuralNets[i] = new NeuralNet([]);
+            this.neuralNets[i].random();
+        }
+
+        this.currentNeuralNet = this.neuralNets[this.generation];
+
+        this.newMaxScore = 0;
+        this.obstacleXPos = 1000;
+        this.obstacleYPos = 0;
+        //-----------------------------------------------------------------------
+
         this.outerContainerEl = document.querySelector(outerContainerId);
         this.containerEl = null;
         this.snackbarEl = null;
@@ -71,13 +89,7 @@
             this.loadImages();
         }
 
-        //AI
-        this.neuralNet = new NeuralNet([]);
-        this.neuralNet.random();
-        this.generation = 1;
-        this.newMaxScore = 0;
-        this.obstacleXPos = 1000;
-        this.obstacleYPos = 0;
+
     }
     window['Runner'] = Runner;
 
@@ -598,36 +610,29 @@
                 }
             }
 
-            if (this.distanceRan > 1) {
-                //this.simulateJump();
-            }
-
-            //this.obstacles.xpos
-
             if (this.playing || (!this.activated &&
                 this.tRex.blinkCount < Runner.config.MAX_BLINK_COUNT)) {
                 this.tRex.update(deltaTime);
                 this.scheduleNextUpdate();
             }
 
-            $('#score').text("Distance: " + this.distanceRan);
+            $('#score').text("Fitness: " + this.distanceRan);
 
-            if ( this.horizon.obstacles.length != 0){
+            if ( this.horizon.obstacles.length !== 0){
                 this.obstacleXPos = this.horizon.obstacles[0].xPos;
                 this.obstacleYPos = this.horizon.obstacles[0].yPos;
             }
 
             $('#obstacleXPos').text("Obstacle X: " + this.obstacleXPos);
             $('#obstacleYPos').text("Obstacle Y: " + this.obstacleYPos);
+
+            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos]);
+            if (neuralOutput > 0.5) {
+                this.simulateJump();
+            }
         },
 
         simulateJump: function () {
-        // Prevent native page scrolling whilst tapping on mobile.
-        // if (IS_MOBILE && this.playing) {
-        //     e.preventDefault();
-        // }
-
-        //if (e.target != this.detailsButton) {
         if (!this.crashed) {
             if (!this.playing) {
                 this.loadSounds();
@@ -644,23 +649,10 @@
             }
         }
 
-        if (this.crashed )//&& e.type == Runner.events.TOUCHSTART &&
-        //e.currentTarget == this.containerEl)
+        if (this.crashed )
         {
             this.restart();
         }
-        //}
-
-        // if (this.playing && !this.crashed && Runner.keycodes.DUCK[e.keyCode]) {
-        //     e.preventDefault();
-        //     if (this.tRex.jumping) {
-        //         // Speed drop, activated only when jump key is not pressed.
-        //         this.tRex.setSpeedDrop();
-        //     } else if (!this.tRex.jumping && !this.tRex.ducking) {
-        //         // Duck.
-        //         this.tRex.setDuck(true);
-        //     }
-        // }
         },
 
         /**
@@ -885,6 +877,13 @@
                     maxScoreGeneration = this.generation;
                     $('#maxScore').text("Max distance: " + this.newMaxScore + " in generation " + maxScoreGeneration);
                 }
+
+                //AI-------------------
+                this.obstacleXPos = 1000;
+                this.obstacleYPos = 0;
+                this.generation++;
+                this.currentNeuralNet = this.neuralNets[this.genome];
+
                 this.playCount++;
                 this.runningTime = 0;
                 this.playing = true;
