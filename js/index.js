@@ -70,6 +70,12 @@
         } else {
             this.loadImages();
         }
+
+        //AI
+        this.neuralNet = new NeuralNet([]);
+        this.neuralNet.random();
+        this.generation = 1;
+        this.newMaxScore = 0;
     }
     window['Runner'] = Runner;
 
@@ -860,6 +866,13 @@
 
         restart: function () {
             if (!this.raqId) {
+                let maxScoreGeneration = 0;
+                if(this.highestScore > this.newMaxScore)
+                {
+                    this.newMaxScore = this.highestScore;
+                    maxScoreGeneration = this.generation;
+                    $('#maxScore').text("Max distance: " + this.newMaxScore + " in generation " + maxScoreGeneration);
+                }
                 this.playCount++;
                 this.runningTime = 0;
                 this.playing = true;
@@ -872,6 +885,7 @@
                 this.distanceMeter.reset(this.highestScore);
                 this.horizon.reset();
                 this.tRex.reset();
+                this.generation++;
                 this.playSound(this.soundFx.BUTTON_PRESS);
                 this.invert(true);
                 this.update();
