@@ -849,6 +849,7 @@
 
             // Reset the time clock.
             this.time = getTimeStamp();
+            this.restart();
         },
 
         stop: function () {
@@ -881,8 +882,9 @@
                 //AI-------------------
                 this.obstacleXPos = 1000;
                 this.obstacleYPos = 0;
-                this.generation++;
+                this.genome++;
                 this.currentNeuralNet = this.neuralNets[this.genome];
+                //----------------------------
 
                 this.playCount++;
                 this.runningTime = 0;
