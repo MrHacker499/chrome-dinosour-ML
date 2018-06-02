@@ -76,6 +76,8 @@
         this.neuralNet.random();
         this.generation = 1;
         this.newMaxScore = 0;
+        this.obstacleXPos = 1000;
+        this.obstacleYPos = 0;
     }
     window['Runner'] = Runner;
 
@@ -597,8 +599,10 @@
             }
 
             if (this.distanceRan > 1) {
-                this.simulateJump();
+                //this.simulateJump();
             }
+
+            //this.obstacles.xpos
 
             if (this.playing || (!this.activated &&
                 this.tRex.blinkCount < Runner.config.MAX_BLINK_COUNT)) {
@@ -607,6 +611,14 @@
             }
 
             $('#score').text("Distance: " + this.distanceRan);
+
+            if ( this.horizon.obstacles.length != 0){
+                this.obstacleXPos = this.horizon.obstacles[0].xPos;
+                this.obstacleYPos = this.horizon.obstacles[0].yPos;
+            }
+
+            $('#obstacleXPos').text("Obstacle X: " + this.obstacleXPos);
+            $('#obstacleYPos').text("Obstacle Y: " + this.obstacleYPos);
         },
 
         simulateJump: function () {
