@@ -32,11 +32,12 @@
         this.canvasCtx = null;
 
         this.tRex = null;
-
+        this.generation = 1;
         this.distanceMeter = null;
         this.distanceRan = 0;
 
         this.highestScore = 0;
+        this.newMaxScore = 0;
 
         this.time = 0;
         this.runningTime = 0;
@@ -662,13 +663,12 @@
         // }
         },
 
-        generatePlayer : function ()
+        generatePlayer: function ()
         {
-                this.neuralNet = new NeuralNet([]);
-                this.neuralNet.random();
+            this.neuralNet = new NeuralNet([]);
+            this.neuralNet.random();
         },
-
-        /**
+            /**
          * Event handler.
          */
         handleEvent: function (e) {
@@ -883,6 +883,13 @@
 
         restart: function () {
             if (!this.raqId) {
+                let maxScoreGeneration = 0;
+                if(this.highestScore > this.newMaxScore)
+                {
+                    this.newMaxScore = this.highestScore;
+                    maxScoreGeneration = this.generation;
+                    $('#maxScore').text("Max distance: " + this.newMaxScore + " in generation " + maxScoreGeneration);
+                }
                 this.playCount++;
                 this.runningTime = 0;
                 this.playing = true;
@@ -895,6 +902,7 @@
                 this.distanceMeter.reset(this.highestScore);
                 this.horizon.reset();
                 this.tRex.reset();
+                this.generation++;
                 this.playSound(this.soundFx.BUTTON_PRESS);
                 this.invert(true);
                 this.update();
