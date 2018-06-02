@@ -19,7 +19,8 @@
         Runner.instance_ = this;
 
         //AI---------------------------------------------------------------------
-        this.numOfGenomes = 10
+        this.numOfGenomes = 30;
+
         this.generation = 0;
         this.genome = 0;
 
@@ -34,6 +35,11 @@
         this.newMaxScore = 0;
         this.obstacleXPos = 1000;
         this.obstacleYPos = 0;
+
+        this.fitnesses = [];
+
+        $('#genome').text("Genome: " + (this.genome + 1) + " of " + this.numOfGenomes);
+        $('#generation').text("Generation: " + this.generation);
         //-----------------------------------------------------------------------
 
         this.outerContainerEl = document.querySelector(outerContainerId);
@@ -616,6 +622,8 @@
                 this.scheduleNextUpdate();
             }
 
+            //AI-----------------------------------------------------------
+
             $('#score').text("Fitness: " + this.distanceRan);
 
             if ( this.horizon.obstacles.length !== 0){
@@ -625,11 +633,13 @@
 
             $('#obstacleXPos').text("Obstacle X: " + this.obstacleXPos);
             $('#obstacleYPos').text("Obstacle Y: " + this.obstacleYPos);
+            $('#speed').text("Speed: " + this.currentSpeed);
 
-            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos]);
+            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed]);
             if (neuralOutput > 0.5) {
                 this.simulateJump();
             }
+            //-------------------------------------------------------------
         },
 
         simulateJump: function () {
@@ -871,6 +881,7 @@
 
         restart: function () {
             if (!this.raqId) {
+                //AI-----------------------------------------------------------------------
                 let maxScoreGeneration = 0;
                 if(this.highestScore > this.newMaxScore)
                 {
@@ -879,11 +890,29 @@
                     $('#maxScore').text("Max distance: " + this.newMaxScore + " in generation " + maxScoreGeneration);
                 }
 
-                //AI-------------------
                 this.obstacleXPos = 1000;
                 this.obstacleYPos = 0;
+
+                this.fitnesses[this.genome] = this.distanceRan;
+
                 this.genome++;
+
+                if (this.genome === this.numOfGenomes){
+                    this.generation++;
+                    this.genome = 0;
+
+                    this.newNeuralNets = [];
+                    for (let i = 0; i < this.numOfGenomes; i++) {
+                        const parents = this.getNewPlayerParents();
+                        this.newNeuralNets[i] = NeuralNet.combine(parents[0], parents[1]);
+                    }
+                    this.neuralNets = this.newNeuralNets;
+                }
+
                 this.currentNeuralNet = this.neuralNets[this.genome];
+
+                $('#genome').text("Genome: " + (this.genome + 1) + " of " + this.numOfGenomes);
+                $('#generation').text("Generation: " + this.generation);
                 //----------------------------
 
                 this.playCount++;
@@ -898,10 +927,35 @@
                 this.distanceMeter.reset(this.highestScore);
                 this.horizon.reset();
                 this.tRex.reset();
-                this.generation++;
                 this.playSound(this.soundFx.BUTTON_PRESS);
                 this.invert(true);
                 this.update();
+            }
+        },
+
+        getNewPlayerParents: function() {
+            const firstPlayerIndex = this.getNewPlayerParentIndex();
+            let secondPlayerIndex = this.getNewPlayerParentIndex();
+            while (firstPlayerIndex === secondPlayerIndex) {
+                secondPlayerIndex = this.getNewPlayerParentIndex();
+            }
+            return [this.neuralNets[firstPlayerIndex], this.neuralNets[secondPlayerIndex]];
+        },
+
+        getNewPlayerParentIndex: function() {
+            let fitnessSum = 0;
+            for (let i = 0; i < this.numOfGenomes; i++) {
+                //fitnessSum += Math.pow(this.fitnesses[i], 2);
+                fitnessSum += this.fitnesses[i];
+            }
+
+            let random = Math.random() * fitnessSum;
+            for (let i = 0; i < this.numOfGenomes; i++) {
+                // random -= Math.pow(this.fitnesses[i], 2);
+                random -= this.fitnesses[i];
+                if (random <= 0) {
+                    return i;
+                }
             }
         },
 
