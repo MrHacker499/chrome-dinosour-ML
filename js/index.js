@@ -13,8 +13,9 @@
      */
     function Runner(outerContainerId, opt_config) {
         // Singleton
+        this.parent = null;
         if (Runner.instance_) {
-            return Runner.instance_;
+            this.parent = Runner.instance_;
         }
         Runner.instance_ = this;
 
@@ -70,6 +71,17 @@
         } else {
             this.loadImages();
         }
+
+        //AI
+        this.neuralNet = new NeuralNet([]);
+        this.neuralNet.random();
+
+        // if (!this.parent) {
+        //     for (let i = 0; i < 10; i++) {
+        //         const runneur = new Runner('.interstitial-wrapper');
+        //         runneur.simulateJump();
+        //     }
+        // }
     }
     window['Runner'] = Runner;
 
@@ -591,7 +603,7 @@
             }
 
             if (this.distanceRan > 1) {
-                this.simulateJump();
+                //this.simulateJump();
             }
 
             if (this.playing || (!this.activated &&
@@ -604,12 +616,6 @@
         },
 
         simulateJump: function () {
-        // Prevent native page scrolling whilst tapping on mobile.
-        // if (IS_MOBILE && this.playing) {
-        //     e.preventDefault();
-        // }
-
-        //if (e.target != this.detailsButton) {
         if (!this.crashed) {
             if (!this.playing) {
                 this.loadSounds();
@@ -626,12 +632,10 @@
             }
         }
 
-        if (this.crashed )//&& e.type == Runner.events.TOUCHSTART &&
-        //e.currentTarget == this.containerEl)
+        if (this.crashed)
         {
             this.restart();
         }
-        //}
 
         // if (this.playing && !this.crashed && Runner.keycodes.DUCK[e.keyCode]) {
         //     e.preventDefault();
@@ -2755,8 +2759,6 @@
 function onDocumentLoad() {
     runner = new Runner('.interstitial-wrapper');
     runner.simulateJump();
-    // while (runner.distanceRan < 50)
-    // {runner.simulateJump();}
 }
 
 document.addEventListener('DOMContentLoaded', onDocumentLoad);
