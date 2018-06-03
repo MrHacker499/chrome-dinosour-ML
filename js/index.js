@@ -523,14 +523,14 @@
             this.playCount++;
 
             // Handle tabbing off the page. Pause the current game.
-            document.addEventListener(Runner.events.VISIBILITY,
-                this.onVisibilityChange.bind(this));
+            //document.addEventListener(Runner.events.VISIBILITY,
+                //this.onVisibilityChange.bind(this));
 
-            window.addEventListener(Runner.events.BLUR,
-                this.onVisibilityChange.bind(this));
+            //window.addEventListener(Runner.events.BLUR,
+                //this.onVisibilityChange.bind(this));
 
-            window.addEventListener(Runner.events.FOCUS,
-                this.onVisibilityChange.bind(this));
+            //window.addEventListener(Runner.events.FOCUS,
+                //this.onVisibilityChange.bind(this));
         },
 
         clearCanvas: function () {
@@ -635,7 +635,7 @@
             $('#obstacleYPos').text("Obstacle Y: " + this.obstacleYPos);
             $('#speed').text("Speed: " + this.currentSpeed);
 
-            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed]);
+            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed, this.obstacles]);
             if (neuralOutput > 0.5) {
                 this.simulateJump();
             }
@@ -951,7 +951,7 @@
 
             let random = Math.random() * fitnessSum;
             for (let i = 0; i < this.numOfGenomes; i++) {
-                // random -= Math.pow(this.fitnesses[i], 2);
+               // random -= Math.pow(this.fitnesses[i], 2);
                 random -= this.fitnesses[i];
                 if (random <= 0) {
                     return i;
@@ -1587,10 +1587,10 @@
             type: 'PTERODACTYL',
             width: 46,
             height: 40,
-            yPos: [100, 75, 50], // Variable height.
+            yPos: [50, 50, 50], // Variable height.
             yPosMobile: [100, 50], // Variable height mobile.
             multipleSpeed: 999,
-            minSpeed: 8.5,
+            minSpeed: 0,
             minGap: 150,
             collisionBoxes: [
                 new CollisionBox(15, 15, 16, 5),
