@@ -635,7 +635,7 @@
             $('#obstacleYPos').text("Obstacle Y: " + this.obstacleYPos);
             $('#speed').text("Speed: " + this.currentSpeed);
 
-            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed, this.obstacles]);
+            const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed]);
             if (neuralOutput > 0.5) {
                 this.simulateJump();
             }
