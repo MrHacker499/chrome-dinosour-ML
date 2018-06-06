@@ -51,9 +51,9 @@ class Neuron {
     }
 }
 
-const numOfInputs = 2;
+const numOfInputs = 3;
 const numOfHiddenLayers = 1;
-const numOfNeuronsInLayer = 3;
+const numOfNeuronsInLayer = 5;
 
 class NeuralNet {
 
@@ -87,17 +87,18 @@ class NeuralNet {
     }
 
     generateOutputLayer() {
-        this.neuralNet.push([Neuron.random(numOfNeuronsInLayer)]);
+        this.neuralNet.push([Neuron.random(numOfNeuronsInLayer), Neuron.random(numOfNeuronsInLayer)]);
     }
 
     output(inputs) {
         this.neuralNet[0] = inputs;
+        //console.log(this.neuralNet);
         for (let i = 1; i < this.neuralNet.length; i++) {
             for (let j = 0; j < this.neuralNet[i].length; j++) {
                 this.neuralNet[i][j].calculateOutput(this.neuralNet[i - 1]);
             }
         }
-        return this.neuralNet[this.neuralNet.length - 1][0].output;
+        return this.neuralNet[2];
     }
 
     static combine(neuralNet1, neuralNet2) {

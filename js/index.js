@@ -636,8 +636,26 @@
             $('#speed').text("Speed: " + this.currentSpeed);
 
             const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed]);
-            if (neuralOutput > 0.5) {
+            console.log(neuralOutput)
+            if (neuralOutput[0].output > 0.5 && neuralOutput[0].output > neuralOutput[1].output) {
+                this.tRex.setDuck(false);
                 this.simulateJump();
+            } else if (neuralOutput[1].output > 0.5 && neuralOutput[1].output > neuralOutput[0].output) {
+                if (this.playing && !this.crashed) {
+                    if (this.tRex.jumping) {
+                        // Speed drop, activated only when jump key is not pressed.
+                        this.tRex.setSpeedDrop();
+                    } else if (!this.tRex.jumping && !this.tRex.ducking) {
+                        // Duck.
+                        this.tRex.setDuck(true);
+                    }
+                }
+            }
+            if (this.playing && !this.crashed) {
+                if (!this.tRex.jumping && !this.tRex.ducking) {
+                    // Duck.
+                    this.tRex.setDuck(false);
+                }
             }
             //-------------------------------------------------------------
         },
