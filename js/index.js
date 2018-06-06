@@ -1619,7 +1619,7 @@
             yPos: [50, 50, 50], // Variable height.
             yPosMobile: [100, 50], // Variable height mobile.
             multipleSpeed: 999,
-            minSpeed: 0,
+            minSpeed: 7.2,
             minGap: 150,
             collisionBoxes: [
                 new CollisionBox(15, 15, 16, 5),
