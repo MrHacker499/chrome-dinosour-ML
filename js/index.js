@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 // extract from chromium source code by @liuwayong
 (function () {
+    var bendrasVidurkis = [];
+    var laikinas = 0;
+    var laikinasMax = 0;
     'use strict';
     /**
      * T-Rex runner.
@@ -19,7 +22,7 @@
         Runner.instance_ = this;
 
         //AI---------------------------------------------------------------------
-        this.numOfGenomes = 30;
+        this.numOfGenomes = 5;
 
         this.generation = 0;
         this.genome = 0;
@@ -636,7 +639,6 @@
             $('#speed').text("Speed: " + this.currentSpeed);
 
             const neuralOutput = this.currentNeuralNet.output([this.obstacleXPos, this.obstacleYPos, this.currentSpeed]);
-            console.log(neuralOutput)
             if (neuralOutput[0].output > 0.5 && neuralOutput[0].output > neuralOutput[1].output) {
                 this.tRex.setDuck(false);
                 this.simulateJump();
@@ -912,10 +914,18 @@
                 this.obstacleYPos = 0;
 
                 this.fitnesses[this.genome] = this.distanceRan;
-
                 this.genome++;
-
                 if (this.genome === this.numOfGenomes){
+                    for (let i = 0; i < this.numOfGenomes; i++) {
+                        laikinas = laikinas + this.fitnesses[i];
+                        if(this.fitnesses[i] > laikinasMax)
+                            laikinasMax = this.fitnesses[i];
+                    }
+                    let vv = [laikinas/this.numOfGenomes, laikinasMax];
+                    bendrasVidurkis[this.generation] = vv;
+                    console.log(bendrasVidurkis);
+                    laikinas = 0;
+                    laikinasMax = 0;
                     this.generation++;
                     this.genome = 0;
 
@@ -932,6 +942,7 @@
                 $('#genome').text("Genome: " + (this.genome + 1) + " of " + this.numOfGenomes);
                 $('#generation').text("Generation: " + this.generation);
                 //----------------------------
+
 
                 this.playCount++;
                 this.runningTime = 0;

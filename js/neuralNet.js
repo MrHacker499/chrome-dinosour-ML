@@ -53,7 +53,7 @@ class Neuron {
 
 const numOfInputs = 3;
 const numOfHiddenLayers = 1;
-const numOfNeuronsInLayer = 5;
+const numOfNeuronsInLayer = 3;
 
 class NeuralNet {
 
@@ -92,7 +92,6 @@ class NeuralNet {
 
     output(inputs) {
         this.neuralNet[0] = inputs;
-        //console.log(this.neuralNet);
         for (let i = 1; i < this.neuralNet.length; i++) {
             for (let j = 0; j < this.neuralNet[i].length; j++) {
                 this.neuralNet[i][j].calculateOutput(this.neuralNet[i - 1]);
